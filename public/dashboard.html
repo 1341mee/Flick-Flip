@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flick Flip - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav id="sidebar">
+        <div class="nav-link active"><a href="dashboard.html">🏠 Dashboard</a></div>
+        <div class="nav-link"><a href="leaderboard.html">🏆 Leaderboard</a></div>
+        <div class="nav-link"><a href="flashcards.html">📚 Flashcards</a></div>
+        <div class="nav-link"><a href="market.html">🛒 Market</a></div>
+        <div class="nav-link"><a href="settings.html">⚙️ Settings</a></div>
+        <h4 id="xp-counter">Loading</h4>
+        <div class="reset-timer">
+            ⏳ Next Reset (PT): <span id="timer-countdown">00:00:00</span>
+        </div>
+        <button id="logout-btn" class="reset-btn">🚪 Log Out</button>
+    </nav>
+
+    <h1 id="title">👋 Welcome back to Flick Flip! 👋</h1>
+
+    <div id="stat-box-container">
+        <div class="stat-box">
+            <div class="stat-number">6,767</div>
+            <div class="stat-label">Active Users</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">67%</div>
+            <div class="stat-label">Task Completion</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">67</div>
+            <div class="stat-label">New Messages</div>
+        </div>
+    </div>
+
+    <script type="module" src="/js/dashboard.js"></script> 
+    <script type="module" src="/js/main.js"></script> 
+</body>
+</html>

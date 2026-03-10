@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flick Flip - Flashcards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1 id="title">📚 Flash Cards</h1>
+
+    <nav id="sidebar">
+        <div class="nav-link"><a href="dashboard.html">🏠 Dashboard</a></div>
+        <div class="nav-link"><a href="leaderboard.html">🏆 Leaderboard</a></div>
+        <div class="nav-link active"><a href="flashcards.html">📚 Flashcards</a></div>
+        <div class="nav-link"><a href="market.html">🛒 Market</a></div>
+        <div class="nav-link"><a href="settings.html">⚙️ Settings</a></div>
+        <h4 id="xp-counter">Loading</h4>
+        <div class="reset-timer">
+            ⏳ Next Reset (PT): <span id="timer-countdown">00:00:00</span>
+        </div>
+        <button id="logout-btn" class="reset-btn">🚪 Log Out</button>
+    </nav>
+
+    <div class="action-row">
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <input id="new-set-name" class="fc-input" placeholder="New Set Name...">
+            <button id="create-set-btn" class="main-btn">📁 Create Set</button>
+        </div>
+        
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="set-selector" class="fc-input" style="min-width: 150px;">
+                <option value="">-- Select a Set --</option>
+            </select>
+            <button id="delete-set-btn" style="background: transparent; color: #ff5f5f; border: 1px solid #ff5f5f; padding: 8px 12px; border-radius: 8px; cursor: pointer;">🗑️ Delete Set</button>
+        </div>
+    </div>
+
+    <h2 id="current-set-title" style="margin-left: var(--content-margin); color: var(--nav-link-text-color); padding: 0 20px;">Please select or create a set</h2>
+
+    <div id="card-display-area"></div>
+
+    <div class="main-content fix-color" id="input-controls" style="display: none;">
+        <input id="question" class="fc-input" placeholder="Front (Question)">
+        <input id="answer" class="fc-input" placeholder="Back (Answer)">
+        <button id="add-btn" class="main-btn">＋ Add Card</button>
+        <button id="study-btn" class="main-btn">📚 Study Set</button>
+    </div>
+
+    <div id="flashcard-area">
+        <div id="darken-bg">
+            <div id="flashcard-container">
+                <div id="flashcard">
+                    <div class="card-face card-front" id="card-front"></div>
+                    <div class="card-face card-back" id="card-back"></div>
+                </div>
+            </div>
+            
+            <div class="fc-btn-container">
+                <button id="btn-wrong" class="fc-btn btn-wrong">❌ Wrong</button>
+                <button id="btn-correct" class="fc-btn btn-correct">✅ Correct</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <script type="module" src="/js/flashcards.js"></script>
+    <script type="module" src="/js/main.js"></script> 
+</body>
+</html>

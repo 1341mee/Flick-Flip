@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flick Flip - Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav id="sidebar">
+        <div class="nav-link"><a href="dashboard.html">🏠 Dashboard</a></div>
+        <div class="nav-link"><a href="leaderboard.html">🏆 Leaderboard</a></div>
+        <div class="nav-link"><a href="flashcards.html">📚 Flashcards</a></div>
+        <div class="nav-link"><a href="market.html">🛒 Market</a></div>
+        <div class="nav-link active"><a href="settings.html">⚙️ Settings</a></div>
+        <h4 id="xp-counter">Loading</h4>
+        <div class="reset-timer">
+            ⏳ Next Reset (PT): <span id="timer-countdown">00:00:00</span>
+        </div>
+        <button id="logout-btn" class="reset-btn">🚪 Log Out</button>
+    </nav>
+
+    <h1 id="title">⚙️ Settings</h1>
+
+    <div class="settings-wrapper">
+        <h2>⚙️ Settings</h2>
+
+        <button id="save-profile" class="main-btn">Save Profile</button>
+
+        <div class="settings-card">
+            <h3 class="fix-color">👤 Profile</h3>
+            <div class="settings-group">
+                <label class="fix-color">Username (Your sign in is still the same as your old one)</label>
+                <input type="text" id="username-input" placeholder="Enter your name">
+            </div>
+        </div>
+
+        <div class="settings-card danger-zone">
+            <h3 class="fix-color">⚠️ Danger Zone</h3>
+            <p class="fix-color">This will permanently delete all your flashcards, leaderboard stats, and planner tasks.</p>
+            <button id="factory-reset" class="reset-btn">Factory Reset App</button>
+        </div>
+    </div>
+    <script type="module" src="/js/settings.js"></script>
+    <script type="module" src="/js/main.js"></script> 
+</body>
+</html>

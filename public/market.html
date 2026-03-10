@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flick Flip - Market</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav id="sidebar">
+        <div class="nav-link"><a href="dashboard.html">🏠 Dashboard</a></div>
+        <div class="nav-link"><a href="leaderboard.html">🏆 Leaderboard</a></div>
+        <div class="nav-link"><a href="flashcards.html">📚 Flashcards</a></div>
+        <div class="nav-link active"><a href="market.html">🛒 Market</a></div>
+        <div class="nav-link"><a href="settings.html">⚙️ Settings</a></div>
+        <h4 id="xp-counter">Loading</h4>
+        <div class="reset-timer">
+            ⏳ Next Reset (PT): <span id="timer-countdown">00:00:00</span>
+        </div>
+        <button id="logout-btn" class="reset-btn">🚪 Log Out</button>
+    </nav>
+
+    <h1 id="title">🛒 Market</h1>
+
+<div class="market-container">
+        <header class="market-header">
+            <h1>🛒 The Flick Market</h1>
+            <div class="balance-card">
+                <p class="fix-color">💰 Current Balance: <span id="user-balance">0</span> Flick Coins</p>
+            </div>
+        </header>
+
+        <section class="market-section">
+            <h2>🎨 Visual Themes</h2>
+            <p class="section-desc">Change the look and feel of your study space.</p>
+            <div class="market-grid">
+                <div class="item-card" data-item-id="theme_forest">
+                    <div class="item-preview" style="background: linear-gradient(135deg, #1b4332, #2d6a4f);">🌲</div>
+                    <h3 class="fix-color">Forest Focus</h3>
+                    <p class="fix-color">Calming greens to help you concentrate.</p>
+                    <button class="buy-btn">Loading...</button>
+                </div>
+
+                <div class="item-card" data-item-id="theme_neon">
+                    <div class="item-preview" style="background: linear-gradient(135deg, #2d3436, #00cec9);">⚡</div>
+                    <h3 class="fix-color">Cyber Neon</h3>
+                    <p class="fix-color">High-energy glow for intense sessions.</p>
+                    <button class="buy-btn">Loading...</button>
+                </div>
+
+                <div class="item-card" data-item-id="theme_midnight">
+                    <div class="item-preview" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">🌌</div>
+                    <h3 class="fix-color">Midnight Nebula</h3>
+                    <p class="fix-color">Deep space aesthetics for night owls.</p>
+                    <button class="buy-btn">Loading...</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="market-section">
+            <h2>🏷️ Prestige Titles</h2>
+            <p class="section-desc">Show off your status on the global leaderboard.</p>
+            <div class="market-grid">
+                <div class="item-card" data-item-id="title_scholar">
+                    <div class="item-preview title-preview">"The Scholar"</div>
+                    <h3 class="fix-color">Scholar Rank</h3>
+                    <p class="fix-color">A classic title for dedicated learners.</p>
+                    <button class="buy-btn">Loading...</button>
+                </div>
+
+                <div class="item-card" data-item-id="title_wizard">
+                    <div class="item-preview title-preview">"Flashcard Wizard"</div>
+                    <h3 class="fix-color">Wizard Rank</h3>
+                    <p class="fix-color">Only for those who have mastered the flip.</p>
+                    <button class="buy-btn">Loading...</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="market-section">
+            <h2>🔥 Special Boosts</h2>
+            <div class="market-grid">
+                <div class="item-card" data-item-id="badge_fire">
+                    <div class="item-preview" style="background: #ffeaa7;">🔥</div>
+                    <h3 class="fix-color">Fire Badge</h3>
+                    <p class="fix-color">An animated flame next to your name.</p>
+                    <button class="buy-btn">Loading...</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script type="module" src="/js/market.js"></script>
+    <script type="module" src="/js/main.js"></script>  
+</body>
+</html>

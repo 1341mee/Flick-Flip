@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flick Flip | Master Your Studies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #92db92;
+            --bg: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --text: #ffffff;
+        }
+
+        .landing-page {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .landing-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 10%;
+            background: rgba(15, 15, 15, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .logo span { color: var(--primary); }
+
+        .cta-button-nav {
+            background: var(--primary);
+            color: black;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 20px;
+        }
+
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 80px 10%;
+            min-height: 80vh;
+        }
+
+        .hero-content { max-width: 600px; }
+
+        .badge {
+            background: rgba(146, 219, 146, 0.1);
+            color: var(--primary);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border: 1px solid var(--primary);
+        }
+
+        .hero h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 4rem;
+            margin: 20px 0;
+            line-height: 1.1;
+        }
+
+        .highlight { color: var(--primary); }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #aaa;
+            margin-bottom: 40px;
+        }
+
+        .main-btn {
+            background: var(--primary);
+            color: black;
+            padding: 15px 35px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+
+        .main-btn:hover { transform: translateY(-3px); }
+
+        .card-preview {
+            width: 300px;
+            height: 400px;
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.5rem;
+            box-shadow: 0 0 50px rgba(146, 219, 146, 0.2);
+            transform: rotate(5deg);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            padding: 100px 10%;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: background 0.3s;
+        }
+
+        .feature-card:hover { background: #222; }
+
+        .feature-card .icon { font-size: 2.5rem; margin-bottom: 15px; }
+    </style>
+</head>
+<body class="landing-page">
+
+    <nav class="landing-nav">
+        <div class="logo">FLICK<span>FLIP</span></div>
+        <div class="nav-links">
+            <a href="login.html" class="login-link">Login</a>
+            <a href="login.html" class="cta-button-nav">Get Started</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <span class="badge">New: Global Leaderboards 🏆</span>
+            <h1>Study Smarter, Not <span class="highlight">Harder.</span></h1>
+            <p>The ultimate flashcard tool built for students who want crush their exams.</p>
+            
+            <div class="hero-btns">
+                <a href="login.html" class="main-btn">Start Flipping Free</a>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="card-preview">
+                <div class="preview-front">What is Photosynthesis?</div>
+            </div>
+        </div>
+    </header>
+
+    <section id="features" class="features">
+        <div class="feature-card">
+            <div class="icon">⚡</div>
+            <h3>Fast Flipping</h3>
+            <p>Optimized for productivity. Learn hundreds of cards in minutes.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">🌍</div>
+            <h3>Cloud Sync</h3>
+            <p>Access your study sets from any device, anywhere in the world.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">📈</div>
+            <h3>Track Progress</h3>
+            <p>Earn XP and compete on the global leaderboards.</p>
+        </div>
+    </section>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flick Flip - Leaderboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav id="sidebar">
+        <div class="nav-link"><a href="dashboard.html">🏠 Dashboard</a></div>
+        <div class="nav-link active"><a href="leaderboard.html">🏆 Leaderboard</a></div>
+        <div class="nav-link"><a href="flashcards.html">📚 Flashcards</a></div>
+        <div class="nav-link"><a href="market.html">🛒 Market</a></div>
+        <div class="nav-link"><a href="settings.html">⚙️ Settings</a></div>
+        <h4 id="xp-counter">Loading</h4>
+        <div class="reset-timer">
+            ⏳ Next Reset (PT): <span id="timer-countdown">00:00:00</span>
+        </div>
+        <button id="logout-btn" class="reset-btn">🚪 Log Out</button>
+    </nav>
+
+    <h1 id="title">🏆 Leaderboard</h1>
+
+    <div class="leaderboard-toggle">
+        <button id="toggle-daily" class="toggle-btn active">📅 Daily XP</button>
+        <button id="toggle-total" class="toggle-btn">🌍 Total XP</button>
+    </div>
+
+    <div class="leaderboard-wrapper">
+        <div class="podium-container">
+            
+            <div class="rank second">
+                <div class="player-info">
+                    <div class="name">---</div>
+                    <div class="xp">0 XP</div>
+                    </div>
+                <div class="podium-block">2</div>
+            </div>
+
+            <div class="rank first">
+                <div class="player-info">
+                    <div class="name">---</div>
+                    <div class="xp">0 XP</div>
+                    </div>
+                <div class="podium-block">1</div>
+            </div>
+
+            <div class="rank third">
+                <div class="player-info">
+                    <div class="name">---</div>
+                    <div class="xp">0 XP</div>
+                    </div>
+                <div class="podium-block">3</div>
+            </div>
+
+        </div>
+
+        <div class="rank-list">
+            <div class="rank-item">
+                <span class="number">4</span>
+                <span class="player-name">Loading</span>
+                <span class="player-xp">Loading XP</span>
+            </div>
+            <div class="rank-item">
+                <span class="number">5</span>
+                <span class="player-name">Loading</span>
+                <span class="player-xp">Loading XP</span>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="/js/leaderboard.js"></script> 
+    <script type="module" src="/js/main.js"></script> 
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Flick Flip - Login</title>
+</head>
+<body class="auth-page">
+
+    <div class="auth-container">
+        <h1 id="auth-title">Login: Welcome Back</h1>
+        <p id="auth-subtitle">Log in to continue your streak!</p>
+
+        <form id="auth-form">
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="A cool username" required>
+            </div>
+            
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" id="submit-btn" class="main-btn">Login</button>
+        </form>
+
+        <div class="auth-switch">
+            <span id="switch-text">Don't have an account?</span>
+            <button id="toggle-auth">Sign Up</button>
+        </div>
+    </div>
+
+    <script type="module" src="/js/auth.js"></script>
+</body>
+</html>
