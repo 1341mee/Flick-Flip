@@ -310,7 +310,9 @@ function recordActivity() {
 }
 
 async function applyXP(amount) {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('sv-SE', {
+        timeZone: 'America/Los_Angeles'
+    });
 
     if (userStats.lastStudyDate !== today) {
         userStats.dailyXP = 0;
