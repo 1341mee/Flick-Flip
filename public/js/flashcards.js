@@ -317,43 +317,44 @@ function recordActivity() {
 }
 
 async function applyXP(amount) {
-    const laTime = new Intl.DateTimeFormat('en-US', {
+    if (!currentUser) return;
+
+    const userRef = doc(db, "users", currentUser.uid);
+    const docSnap = await getDoc(userRef);
+    let latestStats = docSnap.exists() ? docSnap.data().stats : userStats;
+
+    const laDate = new Intl.DateTimeFormat('en-US', {
         timeZone: 'America/Los_Angeles',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
+        year: 'numeric', month: '2-digit', day: '2-digit'
     }).formatToParts(new Date());
+    const d = {};
+    laDate.forEach(({ type, value }) => d[type] = value);
+    const today = `${d.year}-${d.month}-${d.day}`;
 
-    const dateMap = {};
-    laTime.forEach(({ type, value }) => dateMap[type] = value);
-    const today = `${dateMap.year}-${dateMap.month}-${dateMap.day}`;
-
-    if (userStats.lastStudyDate !== today) {
-        console.log(`📅 Date changed from ${userStats.lastStudyDate} to ${today}. Resetting Daily XP.`);
-        userStats.dailyXP = 0;
-        userStats.lastStudyDate = today;
+    if (latestStats.lastStudyDate !== today) {
+        console.log("New day detected. Resetting daily XP.");
+        latestStats.dailyXP = 0;
+        latestStats.lastStudyDate = today;
     }
 
-    const spaceLeft = XP_DAILY_CAP - userStats.dailyXP;
-    const actualGain = Math.min(amount, spaceLeft);
-
-    const oldTotal = userStats.totalXP;
+    const actualGain = Math.min(amount, XP_DAILY_CAP - latestStats.dailyXP);
+    const oldTotal = latestStats.totalXP;
     
-    userStats.totalXP += actualGain;
-    userStats.dailyXP += actualGain;
+    latestStats.totalXP += actualGain;
+    latestStats.dailyXP += actualGain;
 
-    const newTotalCoins = Math.floor(userStats.totalXP / 5);
+    userStats = latestStats;
+
+    const newTotalCoins = Math.floor(latestStats.totalXP / 5);
     const oldTotalCoins = Math.floor(oldTotal / 5);
-    
     if (newTotalCoins > oldTotalCoins) {
-        const coinsToGain = newTotalCoins - oldTotalCoins;
-        userCoins += coinsToGain;
-        console.log(`✨ Milestone! You earned ${coinsToGain} Flick Coin(s)!`);
+        userCoins += (newTotalCoins - oldTotalCoins);
     }
 
-    console.log(`+${actualGain} XP (Current Coins: ${userCoins})`);
-    
-    await saveStatsToCloud();
+    await updateDoc(userRef, {
+        stats: latestStats,
+        coins: Number(userCoins)
+    });
 }
 
 async function saveStatsToCloud() {
