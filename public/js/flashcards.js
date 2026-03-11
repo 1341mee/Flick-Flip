@@ -84,10 +84,17 @@ onAuthStateChanged(auth, (user) => {
                 if (data.stats) {
                     userStats = data.stats;
                 } else {
+                    const laDate = new Intl.DateTimeFormat('en-US', {
+                        timeZone: 'America/Los_Angeles',
+                        year: 'numeric', month: '2-digit', day: '2-digit'
+                    }).formatToParts(new Date());
+                    const dateMap = {};
+                    laDate.forEach(({ type, value }) => dateMap[type] = value);
+                    
                     userStats = { 
                         totalXP: 0, 
                         dailyXP: 0, 
-                        lastStudyDate: new Date().toISOString().split('T')[0] 
+                        lastStudyDate: `${dateMap.year}-${dateMap.month}-${dateMap.day}`
                     };
                 }
 
@@ -310,11 +317,19 @@ function recordActivity() {
 }
 
 async function applyXP(amount) {
-    const today = new Date().toLocaleDateString('sv-SE', {
-        timeZone: 'America/Los_Angeles'
-    });
+    const laTime = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Los_Angeles',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    }).formatToParts(new Date());
+
+    const dateMap = {};
+    laTime.forEach(({ type, value }) => dateMap[type] = value);
+    const today = `${dateMap.year}-${dateMap.month}-${dateMap.day}`;
 
     if (userStats.lastStudyDate !== today) {
+        console.log(`📅 Date changed from ${userStats.lastStudyDate} to ${today}. Resetting Daily XP.`);
         userStats.dailyXP = 0;
         userStats.lastStudyDate = today;
     }
