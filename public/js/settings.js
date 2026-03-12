@@ -36,15 +36,8 @@ saveBtn.onclick = async () => {
 
     if (!user) return;
     
-    if (newName.length < 2) {
-        alert("Username too short!");
-        return;
-    }
-
-    if (newName.length > 20) {
-        alert("Username too long!");
-        return;
-    }
+    if (newName.length < 2) return alert("Username too short!");
+    if (newName.length > 20) return alert("Username too long!");
 
     try {
         const usersRef = collection(db, "users");
@@ -64,6 +57,7 @@ saveBtn.onclick = async () => {
         }
 
         const userRef = doc(db, "users", user.uid);
+        
         await setDoc(userRef, {
             displayName: newName,
             lastUpdated: new Date()
@@ -75,28 +69,26 @@ saveBtn.onclick = async () => {
         console.error("Firestore Error:", error);
         alert("Error saving: " + error.message);
     }
-
-    await setDoc(userRef, {
-        displayName: newName,
-    }, { merge: true });
 };
 
 factoryResetBtn.onclick = async () => {
     const user = auth.currentUser;
-    if (user && confirm("Are you sure? This will reset your username and theme.")) {
+    if (!user) return;
+
+    if (confirm("Are you sure? This will reset your username and remove your theme.")) {
         try {
             const userRef = doc(db, "users", user.uid);
-            
             await updateDoc(userRef, {
                 displayName: "",
-                highContrast: false
+                activeTheme: "theme_default"
             });
 
             usernameInput.value = "";
-            document.body.classList.remove('high-contrast');
+            document.body.className = "theme_default";
             
             alert("Username and settings reset!");
         } catch (error) {
+            console.error(error);
             alert("Error resetting data.");
         }
     }
