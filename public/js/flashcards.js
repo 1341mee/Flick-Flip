@@ -1,25 +1,8 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { auth, db } from "./firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { 
     getFirestore, doc, setDoc, onSnapshot, updateDoc, deleteField, getDoc 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-// ----------
-// Firebase Configuration
-// ----------
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCDkERangG5NQzaoBhudH2hRvJBXiCdaSI",
-  authDomain: "flick-flip.firebaseapp.com",
-  projectId: "flick-flip",
-  storageBucket: "flick-flip.firebasestorage.app",
-  messagingSenderId: "745883715766",
-  appId: "1:745883715766:web:0ce4c055ea94925917be17"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
 
 // ----------
 // State Management
@@ -47,18 +30,14 @@ const newSetNameInput = document.getElementById('new-set-name');
 const createSetBtn = document.getElementById('create-set-btn');
 const deleteSetBtn = document.getElementById('delete-set-btn');
 const setTitle = document.getElementById('current-set-title');
-const inputControls = document.getElementById('input-controls');
 const displayArea = document.getElementById('card-display-area');
-
-const questionInput = document.getElementById('question');
-const answerInput = document.getElementById('answer');
-const addBtn = document.getElementById('add-btn');
-const studyBtn = document.getElementById('study-btn');
+const floatingAddBtn = document.getElementById('floating-add-btn');
 
 const flashcardOverlay = document.getElementById('flashcard-area');
 const flashcardBox = document.getElementById('flashcard');
 const cardFront = document.getElementById('card-front');
 const cardBack = document.getElementById('card-back');
+const endStudyBtn = document.getElementById('end-study-btn');
 
 // ----------
 // Firebase Auth & Data Sync
@@ -71,45 +50,20 @@ onAuthStateChanged(auth, (user) => {
         onSnapshot(doc(db, "users", user.uid), (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                
                 allSets = data.flashcardSets || {};
+                userCoins = data.coins || 0;
+                userStats = data.stats || userStats;
 
-                if (currentSetId && !allSets[currentSetId]) {
-                    currentSetId = null;
-                }
-
-                updateDropdownUI();
-                renderActiveSet();
-
-                if (data.stats) {
-                    userStats = data.stats;
-                } else {
-                    const laDate = new Intl.DateTimeFormat('en-US', {
-                        timeZone: 'America/Los_Angeles',
-                        year: 'numeric', month: '2-digit', day: '2-digit'
-                    }).formatToParts(new Date());
-                    const dateMap = {};
-                    laDate.forEach(({ type, value }) => dateMap[type] = value);
-                    
-                    userStats = { 
-                        totalXP: 0, 
-                        dailyXP: 0, 
-                        lastStudyDate: `${dateMap.year}-${dateMap.month}-${dateMap.day}`
-                    };
-                }
-
+                // Sync Theme
                 if (data.highContrast) {
                     document.body.classList.add('high-contrast');
                 } else {
                     document.body.classList.remove('high-contrast');
                 }
 
-                userCoins = data.coins || 0;
-            } else {
-                console.warn("No user document found in Firestore.");
+                updateDropdownUI();
+                renderActiveSet();
             }
-        }, (error) => {
-            console.error("Snapshot failed:", error);
         });
     } else {
         window.location.href = "login.html";
@@ -126,7 +80,7 @@ async function saveToCloud() {
 }
 
 // ----------
-// UI Logic (Sets)
+// UI Logic (Inline Editing)
 // ----------
 
 function updateDropdownUI() {
@@ -145,31 +99,69 @@ function renderActiveSet() {
     displayArea.innerHTML = "";
     const set = allSets[currentSetId];
     if (!set) {
-        currentSetId = null;
         setTitle.textContent = "Please select or create a set";
-        inputControls.style.display = "none";
         return;
     }
     
     setTitle.textContent = `Set: ${set.name}`;
-    inputControls.style.display = "flex";
-    set.cards.forEach(card => {
+    set.cards.forEach((card, index) => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'flashcard-item';
-        cardDiv.dataset.id = card.id;
         cardDiv.innerHTML = `
-            <div class="card-section"><span class="card-label">Question</span><p>${card.question}</p></div>
+            <div class="card-section">
+                <span class="card-label">Question</span>
+                <textarea class="editable-text q-input" data-index="${index}">${card.question}</textarea>
+            </div>
             <div class="card-divider"></div>
-            <div class="card-section"><span class="card-label">Answer</span><p>${card.answer}</p></div>
-            <button class="delete-card-btn">&times;</button>
+            <div class="card-section">
+                <span class="card-label">Answer</span>
+                <textarea class="editable-text a-input" data-index="${index}">${card.answer}</textarea>
+            </div>
+            <button class="delete-card-btn" data-index="${index}">&times;</button>
         `;
         displayArea.appendChild(cardDiv);
+    });
+
+    // Auto-resize textareas
+    document.querySelectorAll('.editable-text').forEach(el => {
+        el.style.height = el.scrollHeight + "px";
+        el.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
     });
 }
 
 // ----------
-// Event Listeners (Set Management)
+// Event Listeners
 // ----------
+
+floatingAddBtn.addEventListener('click', async () => {
+    if (!currentSetId) return alert("Select a set first!");
+    const newCard = { question: "New Question", answer: "New Answer", id: Date.now() };
+    allSets[currentSetId].cards.unshift(newCard); 
+    await saveToCloud();
+    renderActiveSet();
+});
+
+displayArea.addEventListener('focusout', async (e) => {
+    if (e.target.classList.contains('editable-text')) {
+        const index = e.target.dataset.index;
+        const set = allSets[currentSetId];
+        if (e.target.classList.contains('q-input')) set.cards[index].question = e.target.value;
+        else set.cards[index].answer = e.target.value;
+        await saveToCloud();
+    }
+});
+
+displayArea.addEventListener('click', async (e) => {
+    if (e.target.classList.contains('delete-card-btn')) {
+        const index = e.target.dataset.index;
+        allSets[currentSetId].cards.splice(index, 1);
+        await saveToCloud();
+        renderActiveSet();
+    }
+});
 
 createSetBtn.addEventListener('click', async () => {
     const name = newSetNameInput.value.trim();
@@ -178,7 +170,6 @@ createSetBtn.addEventListener('click', async () => {
     allSets[setId] = { name: name, cards: [] };
     newSetNameInput.value = "";
     await saveToCloud();
-    setSelector.value = setId;
     currentSetId = setId;
     renderActiveSet();
 });
@@ -188,57 +179,11 @@ setSelector.addEventListener('change', (e) => {
     renderActiveSet();
 });
 
-deleteSetBtn.addEventListener('click', async () => {
-    if (!currentSetId || !allSets[currentSetId]) return;
-
-    const nameToDelete = allSets[currentSetId].name;
-
-    if (confirm(`Delete the entire set "${nameToDelete}"?`)) {
-        try {
-            const userRef = doc(db, "users", currentUser.uid);
-            await updateDoc(userRef, {
-                [`flashcardSets.${currentSetId}`]: deleteField()
-            });
-
-            currentSetId = null;
-            window.location.reload();
-        } catch (error) {
-            alert("Failed to delete set: " + error.message);
-        }
-    }
-});
-
-// ----------
-// Event Listeners (Card Management)
-// ----------
-
-addBtn.addEventListener('click', async () => {
-    const qText = questionInput.value.trim();
-    const aText = answerInput.value.trim();
-    if (!qText || !aText || !currentSetId) return;
-
-    const newCard = { question: qText, answer: aText, id: Date.now() };
-    allSets[currentSetId].cards.push(newCard);
-    
-    questionInput.value = "";
-    answerInput.value = "";
-    await saveToCloud();
-});
-
-displayArea.addEventListener('click', async (e) => {
-    if (e.target.classList.contains('delete-card-btn')) {
-        const cardElement = e.target.closest('.flashcard-item');
-        const cardId = parseInt(cardElement.dataset.id);
-        allSets[currentSetId].cards = allSets[currentSetId].cards.filter(c => c.id !== cardId);
-        await saveToCloud();
-    }
-});
-
 // ----------
 // Study Mode Engine
 // ----------
 
-studyBtn.addEventListener('click', () => {
+document.getElementById('study-btn').addEventListener('click', () => {
     if (!currentSetId || allSets[currentSetId].cards.length === 0) return alert("Add cards first!");
     startStudySession([...allSets[currentSetId].cards]);
 });
@@ -254,21 +199,9 @@ function startStudySession(cards) {
 
 function updateStudyCard() {
     const current = studyQueue[currentIndex];
-    flashcardBox.style.transition = 'none';
     flashcardBox.classList.remove('is-flipped');
-
-    cardFront.innerHTML = `
-        <div class="card-header">Question<br>Card ${currentIndex + 1} of ${studyQueue.length}</div>
-        <div class="card-main-text">${current.question}</div>
-    `;
-    cardBack.innerHTML = `
-        <div class="card-header" style="opacity: 0.5;">Answer</div>
-        <div class="card-main-text">${current.answer}</div>
-    `;
-
-    setTimeout(() => {
-        flashcardBox.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-    }, 10); 
+    cardFront.innerHTML = `<div class="card-header">Card ${currentIndex + 1}/${studyQueue.length}</div><div class="card-main-text">${current.question}</div>`;
+    cardBack.innerHTML = `<div class="card-header">Answer</div><div class="card-main-text">${current.answer}</div>`;
 }
 
 function handleFeedback(isCorrect) {
@@ -285,14 +218,33 @@ function handleFeedback(isCorrect) {
 
 function finishRound() {
     if (missedCards.length > 0) {
-        const redo = confirm(`Round Over! Score: ${score}/${studyQueue.length}.\nYou missed ${missedCards.length} cards. Redo them now?`);
-        if (redo) startStudySession(missedCards);
-        else flashcardOverlay.style.display = "none";
+        if (confirm(`Finished! Score: ${score}/${studyQueue.length}. Redo ${missedCards.length} missed cards?`)) {
+            startStudySession(missedCards);
+        } else {
+            flashcardOverlay.style.display = "none";
+        }
     } else {
-        alert("Great job! You mastered all cards in this set.");
+        alert("Perfect round!");
         flashcardOverlay.style.display = "none";
     }
 }
+
+// Safe End Button Logic
+let endClickCount = 0;
+endStudyBtn.addEventListener('click', () => {
+    endClickCount++;
+    if (endClickCount === 1) {
+        endStudyBtn.innerText = "Confirm End?";
+        setTimeout(() => { 
+            endStudyBtn.innerText = "🛑 End Study"; 
+            endClickCount = 0; 
+        }, 3000);
+    } else {
+        flashcardOverlay.style.display = "none";
+        endStudyBtn.innerText = "🛑 End Study";
+        endClickCount = 0;
+    }
+});
 
 // ----------
 // XP Logic
@@ -301,14 +253,10 @@ function finishRound() {
 function recordActivity() {
     const now = Date.now();
     const secondsSinceLastClick = (now - lastClickTimestamp) / 1000;
-
-    if (secondsSinceLastClick < 60) {
-        totalSessionSeconds += secondsSinceLastClick;
-    }
-
+    if (secondsSinceLastClick < 60) totalSessionSeconds += secondsSinceLastClick;
     lastClickTimestamp = now;
-    const randCheck = Math.round(7 + Math.random() * 5);
 
+    const randCheck = Math.round(7 + Math.random() * 5);
     if (totalSessionSeconds >= randCheck) {
         const xpToGain = Math.floor(totalSessionSeconds / randCheck);
         totalSessionSeconds %= randCheck;
@@ -318,87 +266,13 @@ function recordActivity() {
 
 async function applyXP(amount) {
     if (!currentUser) return;
-
     const userRef = doc(db, "users", currentUser.uid);
-    const docSnap = await getDoc(userRef);
-    let latestStats = docSnap.exists() ? docSnap.data().stats : userStats;
-
-    const laDate = new Intl.DateTimeFormat('en-US', {
-        timeZone: 'America/Los_Angeles',
-        year: 'numeric', month: '2-digit', day: '2-digit'
-    }).formatToParts(new Date());
-    const d = {};
-    laDate.forEach(({ type, value }) => d[type] = value);
-    const today = `${d.year}-${d.month}-${d.day}`;
-
-    if (latestStats.lastStudyDate !== today) {
-        console.log("New day detected. Resetting daily XP.");
-        latestStats.dailyXP = 0;
-        latestStats.lastStudyDate = today;
-    }
-
-    const actualGain = Math.min(amount, XP_DAILY_CAP - latestStats.dailyXP);
-    const oldTotal = latestStats.totalXP;
-    
-    latestStats.totalXP += actualGain;
-    latestStats.dailyXP += actualGain;
-
-    userStats = latestStats;
-
-    const newTotalCoins = Math.floor(latestStats.totalXP / 5);
-    const oldTotalCoins = Math.floor(oldTotal / 5);
-    if (newTotalCoins > oldTotalCoins) {
-        userCoins += (newTotalCoins - oldTotalCoins);
-    }
-
-    await updateDoc(userRef, {
-        stats: latestStats,
-        coins: Number(userCoins)
-    });
+    userStats.totalXP += amount;
+    userStats.dailyXP += amount;
+    userCoins = Math.floor(userStats.totalXP / 5);
+    await updateDoc(userRef, { stats: userStats, coins: userCoins });
 }
 
-async function saveStatsToCloud() {
-    if (!currentUser) return;
-
-    const userRef = doc(db, "users", currentUser.uid);
-    
-    const dataToSave = {
-        stats: {
-            totalXP: Number(userStats.totalXP),
-            dailyXP: Number(userStats.dailyXP),
-            lastStudyDate: userStats.lastStudyDate
-        },
-        coins: Number(userCoins)
-    };
-
-    try {
-        await setDoc(userRef, dataToSave, { merge: true });
-        console.log("✅ Saved to Cloud");
-    } catch (error) {
-        console.error("❌ Save Error:", error);
-    }
-}
-
-// ----------
-// Study UI Listeners
-// ----------
-
-document.getElementById('btn-correct').addEventListener('click', () => {
-    recordActivity();
-    handleFeedback(true);
-});
-
-document.getElementById('btn-wrong').addEventListener('click', () => {
-    recordActivity();
-    handleFeedback(false);
-});
-
-flashcardBox.addEventListener('click', () => {
-    flashcardBox.classList.toggle('is-flipped');
-});
-
-flashcardOverlay.addEventListener('click', (e) => {
-    if (e.target.id === 'darken-bg' || e.target.id === 'flashcard-area') {
-        flashcardOverlay.style.display = "none";
-    }
-});
+document.getElementById('btn-correct').addEventListener('click', () => { recordActivity(); handleFeedback(true); });
+document.getElementById('btn-wrong').addEventListener('click', () => { recordActivity(); handleFeedback(false); });
+flashcardBox.addEventListener('click', () => flashcardBox.classList.toggle('is-flipped'));
